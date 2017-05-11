@@ -32,18 +32,15 @@ public class AppMain {
 
         // Check upload has error
         System.out.println("########");
-        List<Observable<String>> filenameObs = new ArrayList<>();
         for (Map.Entry<String, AsyncSubject<String>> entry : uploadMap.entrySet()) {
             if (entry.getValue().hasThrowable()) {
-                filenameObs.add(uploadImageSubject(entry.getKey(), 10));
-            } else {
-                filenameObs.add(entry.getValue());
+                uploadMap.put(entry.getKey(), uploadImageSubject(entry.getKey(), 10));
             }
         }
 
 
         // Upload with call save
-        Observable.zip(filenameObs, new FuncN<List<String>>() {
+        Observable.zip(uploadMap.values(), new FuncN<List<String>>() {
             @Override
             public List<String> call(Object... args) {
                 List<String> filenames = new ArrayList<>();
